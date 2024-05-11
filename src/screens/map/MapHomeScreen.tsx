@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {Alert, Pressable, StyleSheet, View} from 'react-native';
 import MapView, {
   Callout,
@@ -7,7 +7,7 @@ import MapView, {
   Marker,
   PROVIDER_GOOGLE,
 } from 'react-native-maps';
-import {alerts, colors, mapNavigations} from '../../constants';
+import {alerts, colors, mapNavigations, numbers} from '../../constants';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -18,10 +18,11 @@ import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {MainDrawerParamList} from '../../navigations/drawer/MainDrawerNavigator';
 import useUserLocation from '../../hooks/useUserLocation';
 import usePermission from '../../hooks/usePermisson';
-import CustomMarker from '../../components/CustomMarker';
+import CustomMarker from '../../components/common/CustomMarker';
 import useGetMarkers from '../../hooks/queries/useGetMarkers';
 import useModal from '../../hooks/useModal';
-import MarkerModal from '../../components/MarkerModal';
+import MarkerModal from '../../components/map/MarkerModal';
+import useMoveMapView from '../../hooks/useMoveMapView';
 // import mapStyle from '../../style/mapStyle';
 
 type Navigation = CompositeNavigationProp<
@@ -32,21 +33,13 @@ type Navigation = CompositeNavigationProp<
 function MapHomeScreen() {
   const inset = useSafeAreaInsets();
   const navigation = useNavigation<Navigation>();
-  const mapRef = useRef<MapView | null>(null);
   const {userLocation, isUserLocationError} = useUserLocation();
   const [selectLocation, setSelectLocation] = useState<LatLng | null>();
   const [markerId, setMarkerId] = useState<number | null>(null);
   const markerModal = useModal();
   const {data: markers = []} = useGetMarkers();
+  const {mapRef, moveMapView, handleChangeDelta} = useMoveMapView();
   usePermission('LOCATION');
-
-  const moveMapView = (coordinate: LatLng) => {
-    mapRef.current?.animateToRegion({
-      ...coordinate,
-      longitudeDelta: 0.01,
-      latitudeDelta: 0.005,
-    });
-  };
 
   const handlePressMarker = (id: number, coordinate: LatLng) => {
     setMarkerId(id);
@@ -73,6 +66,7 @@ function MapHomeScreen() {
 
   const handlePressUserLocation = () => {
     if (isUserLocationError) {
+      // Error
       return;
     }
 
@@ -90,7 +84,8 @@ function MapHomeScreen() {
         showsMyLocationButton={false}
         // customMapStyle={mapStyle}
         onLongPress={handleLongPressMapView}
-        region={{...userLocation, longitudeDelta: 0.01, latitudeDelta: 0.005}}>
+        onRegionChangeComplete={handleChangeDelta}
+        region={{...userLocation, ...numbers.INITIAL_DELTA}}>
         {markers.map(({id, color, score, ...coordinate}) => (
           <CustomMarker
             key={id}

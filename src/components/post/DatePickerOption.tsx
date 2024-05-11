@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import {colors} from '../constants';
+import {colors} from '../../constants';
 import DatePicker from 'react-native-date-picker';
 
 interface DatePickerOptionProps {

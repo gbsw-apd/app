@@ -17,7 +17,7 @@ const musicFiles = {
   waterfall: require('../../assets/waterfall.mp3'),
 };
 
-const MusicHomeScreen = () => {
+function MusicHomeScreen() {
   const [sound, setSound] = useState<Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState<{[key: string]: boolean}>(() =>
     Object.fromEntries(Object.keys(musicFiles).map(key => [key, false])),
@@ -74,7 +74,7 @@ const MusicHomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.buttonContainer}>
-        <Text style={styles.title}>음악 플레이어</Text>
+        <Text style={styles.title}>의성군의 소리</Text>
         {Object.keys(musicFiles).map(soundName => (
           <TouchableOpacity
             key={soundName}
@@ -106,7 +106,7 @@ const MusicHomeScreen = () => {
       </View>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   title: {

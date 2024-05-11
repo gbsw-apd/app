@@ -9,13 +9,25 @@ import {
   Text,
   View,
 } from 'react-native';
-import useGetPost from '../hooks/queries/useGetPost';
+import useGetPost from '../../hooks/queries/useGetPost';
 import {Modal} from 'react-native';
-import {colors} from '../constants';
-import CustomMarker from './CustomMarker';
+import {
+  colors,
+  feedNavigations,
+  feedTabNavigations,
+  mainNavigations,
+} from '../../constants';
+import CustomMarker from '../common/CustomMarker';
 import Octions from 'react-native-vector-icons/Octicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {getDateWidthSeparator} from '../utils';
+import {getDateWidthSeparator} from '../../utils';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+// import {FeedtackParamList} from '../../navigations/stack/FeedStackNavigator';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {MainDrawerParamList} from '../../navigations/drawer/MainDrawerNavigator';
+import {FeedTabParamList} from '../../navigations/tab/FeedTabNavigator';
+// import {Screen} from 'react-native-screens';
 
 interface MarkerModalProps {
   markerId: number | null;
@@ -23,16 +35,36 @@ interface MarkerModalProps {
   hide: () => void;
 }
 
+type Navigation = CompositeNavigationProp<
+  DrawerNavigationProp<MainDrawerParamList>,
+  BottomTabNavigationProp<FeedTabParamList>
+>;
+
 function MarkerModal({markerId, isVisible, hide}: MarkerModalProps) {
+  const navigation = useNavigation<Navigation>();
   const {data: post, isPending, isError} = useGetPost(markerId);
 
   if (isPending || isError) {
     return <></>;
   }
+
+  const handlePressModal = () => {
+    navigation.navigate(mainNavigations.FEED, {
+      screen: feedTabNavigations.FEED_HOME,
+      params: {
+        screen: feedNavigations.FEED_DETAIL,
+        params: {
+          id: post.id,
+        },
+        initial: false,
+      },
+    });
+  };
+
   return (
     <Modal visible={isVisible} transparent={true} animationType="slide">
       <SafeAreaView style={styles.optionBackground} onTouchEnd={hide}>
-        <Pressable style={styles.cardContainer} onPress={() => {}}>
+        <Pressable style={styles.cardContainer} onPress={handlePressModal}>
           <View style={styles.cardInner}>
             <View style={styles.cardAlign}>
               {post?.images.length > 0 && (

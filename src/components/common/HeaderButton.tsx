@@ -1,6 +1,6 @@
 import React, {ReactNode} from 'react';
 import {Pressable, StyleSheet, Text} from 'react-native';
-import {colors} from '../constants';
+import {colors} from '../../constants';
 import {PressableProps} from 'react-native';
 
 interface HeaderButtonProps extends PressableProps {
