@@ -1,156 +1,30 @@
-import React, {useState, useEffect} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
-} from 'react-native';
-import Sound from 'react-native-sound';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import {colors} from '../../constants';
-
-const musicFiles = {
-  rain: require('../../assets/rain.mp3'),
-  nature: require('../../assets/nature.mp3'),
-  tide: require('../../assets/tide.mp3'),
-  waterfall: require('../../assets/waterfall.mp3'),
-};
+import React from 'react';
+import {StyleSheet, View, ImageBackground} from 'react-native';
+import Music from '../../components/music/Music';
 
 function MusicHomeScreen() {
-  const [sound, setSound] = useState<Sound | null>(null);
-  const [isPlaying, setIsPlaying] = useState<{[key: string]: boolean}>(() =>
-    Object.fromEntries(Object.keys(musicFiles).map(key => [key, false])),
-  );
-  const [activeButton, setActiveButton] = useState<string | null>(null);
-  const [currentPlayingSound, setCurrentPlayingSound] = useState<string | null>(
-    null,
-  );
-
-  useEffect(() => {
-    return () => {
-      if (sound) {
-        sound.stop(() => {
-          sound.release();
-        });
-      }
-    };
-  }, [sound]);
-
-  const toggleSound = (soundName: keyof typeof musicFiles) => {
-    if (isPlaying[soundName]) {
-      sound?.stop(() => {
-        if (sound) {
-          setIsPlaying({...isPlaying, [soundName]: false});
-        }
-        setCurrentPlayingSound(null);
-      });
-    } else {
-      if (sound) {
-        sound.stop(() => {
-          sound.release();
-        });
-      }
-
-      const newSound = new Sound(musicFiles[soundName], error => {
-        if (error) {
-          console.log('음악 로드 실패', error);
-          return;
-        }
-
-        setSound(newSound);
-        setIsPlaying({...isPlaying, [soundName]: true});
-        setCurrentPlayingSound(soundName);
-
-        newSound.play(success => {
-          if (!success) {
-            console.log('재생 실패');
-          }
-        });
-      });
-    }
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.buttonContainer}>
-        <Text style={styles.title}>의성군의 소리</Text>
-        {Object.keys(musicFiles).map(soundName => (
-          <TouchableOpacity
-            key={soundName}
-            style={[
-              styles.buttonStyle,
-              activeButton === soundName && styles.activeButtonStyle,
-            ]}
-            onPress={() => toggleSound(soundName as keyof typeof musicFiles)}>
-            <Icon
-              name="queue-music"
-              size={25}
-              color={activeButton === soundName ? colors.WHITE : colors.BLACK}
-              style={styles.buttonIcon}
-            />
-            <Text
-              style={[
-                styles.buttonText,
-                activeButton === soundName && styles.activeButtonText,
-              ]}>
-              {soundName}
-            </Text>
-            <Icon
-              name={currentPlayingSound === soundName ? 'pause' : 'play-arrow'}
-              size={25}
-              color={activeButton === soundName ? colors.WHITE : colors.BLACK}
-            />
-          </TouchableOpacity>
-        ))}
-      </View>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <ImageBackground
+        source={{
+          uri: 'https://www.adns.kr/news/photo/202103/12397_23407_2935.jpg',
+        }}
+        resizeMode="cover"
+        style={styles.backgroundImage}>
+        <Music />
+      </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 25,
-    fontWeight: '500',
-    color: colors.BLACK,
-  },
   container: {
     flex: 1,
   },
-  buttonContainer: {
+  backgroundImage: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 10,
-  },
-  buttonStyle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    marginVertical: 5,
-    paddingHorizontal: 20,
-    height: 60,
-    width: 250,
-    justifyContent: 'space-between',
-    borderRadius: 30,
-    shadowColor: colors.BLACK,
-    shadowOffset: {width: 1, height: 2},
-    shadowOpacity: 0.5,
-    elevation: 2,
-  },
-  activeButtonStyle: {
-    backgroundColor: colors.BLACK,
-  },
-  buttonText: {
-    color: colors.BLACK,
-    fontSize: 20,
-    fontWeight: '400',
-  },
-  activeButtonText: {
-    color: colors.WHITE,
-  },
-  buttonIcon: {
-    marginRight: 10,
+    width: '100%',
+    height: '100%',
   },
 });
 
