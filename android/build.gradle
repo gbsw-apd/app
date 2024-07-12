@@ -25,3 +25,5 @@ buildscript {
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+def reactNativeVersion = "0.73.6"

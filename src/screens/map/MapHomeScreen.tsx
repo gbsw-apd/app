@@ -23,7 +23,7 @@ import useGetMarkers from '../../hooks/queries/useGetMarkers';
 import useModal from '../../hooks/useModal';
 import MarkerModal from '../../components/map/MarkerModal';
 import useMoveMapView from '../../hooks/useMoveMapView';
-// import mapStyle from '../../style/mapStyle';
+import mapStyle from '../../style/mapStyle';
 
 type Navigation = CompositeNavigationProp<
   StackNavigationProp<MapStackParamList>,

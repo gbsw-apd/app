@@ -72,11 +72,12 @@ function MarkerModal({markerId, isVisible, hide}: MarkerModalProps) {
                   <Image
                     style={styles.image}
                     source={{
-                      uri: `${
-                        Platform.OS === 'ios'
-                          ? 'http://localhost:3030/'
-                          : 'http://10.0.2.2:3030/'
-                      }${post.images[0]?.uri}`,
+                      // uri: `${
+                      //   Platform.OS === 'ios'
+                      //     ? 'http://localhost:3030/'
+                      //     : 'http://10.0.2.2:3030/'
+                      // }${post.images[0]?.uri}`,
+                      uri: `http://43.202.37.122:3030/${post.images[0]?.uri}`,
                     }}
                     resizeMode="cover"
                   />
